@@ -8,6 +8,7 @@
   <component name="ChangeListManager">
     <list default="true" id="f895b329-5c71-40cb-a57d-748a3f8fa1af" name="Default" comment="">
       <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -35,8 +36,8 @@
       <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="30">
-              <caret line="2" lean-forward="true" selection-start-line="2" selection-end-line="2" />
+            <state relative-caret-position="45">
+              <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
             </state>
           </provider>
         </entry>
@@ -101,6 +102,23 @@
             <path>
               <item name="yaChat" type="b2602c69:ProjectViewProjectNode" />
               <item name="yaChat" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="yaChat" type="b2602c69:ProjectViewProjectNode" />
+              <item name="yaChat" type="462c0819:PsiDirectoryNode" />
+              <item name="out" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="yaChat" type="b2602c69:ProjectViewProjectNode" />
+              <item name="yaChat" type="462c0819:PsiDirectoryNode" />
+              <item name="out" type="462c0819:PsiDirectoryNode" />
+              <item name="artifacts" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="yaChat" type="b2602c69:ProjectViewProjectNode" />
+              <item name="yaChat" type="462c0819:PsiDirectoryNode" />
+              <item name="out" type="462c0819:PsiDirectoryNode" />
+              <item name="production" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="yaChat" type="b2602c69:ProjectViewProjectNode" />
@@ -186,16 +204,15 @@
       <updated>1549402159997</updated>
       <workItem from="1549402164257" duration="40912000" />
       <workItem from="1549899950156" duration="4517000" />
-      <workItem from="1549906455250" duration="5458000" />
+      <workItem from="1549906455250" duration="5751000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="50887000" />
+    <option name="totallyTimeSpent" value="51180000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="12" y="23" width="1631" height="1027" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -208,10 +225,10 @@
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.4993895" weight="0.28387097" />
-      <window_info anchor="bottom" id="Terminal" order="7" visible="true" weight="0.3688172" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="7" visible="true" weight="0.3688172" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="2" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2271869" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2271869" />
       <window_info anchor="right" id="Database" order="3" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -290,8 +307,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" lean-forward="true" selection-start-line="2" selection-end-line="2" />
+        <state relative-caret-position="45">
+          <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
         </state>
       </provider>
     </entry>
