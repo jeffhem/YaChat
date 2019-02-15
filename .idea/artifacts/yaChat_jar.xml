@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="yaChat:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/yaChat_jar</output-path>
+    <root id="archive" name="yaChat.jar">
+      <element id="module-output" name="yaChat" />
+      <element id="dir-copy" path="$PROJECT_DIR$/src" />
+    </root>
+  </artifact>
+</component>
