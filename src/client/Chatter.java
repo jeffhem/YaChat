@@ -7,12 +7,11 @@ import java.lang.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 
-public class yaChatClient implements Runnable {
+public class Chatter implements Runnable {
 
     private static String userName = null;
-    private static List<String[]> chatters;
+    private static ArrayList<String[]> chatters;
     private static DatagramSocket clientUDPSocket = null;
 
     public static void main(String [] arg) throws IOException {
@@ -51,6 +50,7 @@ public class yaChatClient implements Runnable {
         TCPOut.println("HELO " + userName + " " + ClientHostAddress + " " + UDPPort);
         System.out.println("My port is: " + UDPPort);
 
+        // not using writeBytes, so the message would not break into packets
 //        DataOutputStream outToServer = new DataOutputStream(clientTCPSocket.getOutputStream());
 //        outToServer.writeBytes("HELO " + userName + " " + ClientHostAddress + " " + udpPort + '\n');
 
@@ -66,6 +66,7 @@ public class yaChatClient implements Runnable {
                     System.out.println(chatter[0] + " is in the chatroom");
                 }
                 System.out.println(userName + " accepted to the chatroom");
+                System.out.print(userName + ": ");
                 break;
 
             case "RJCT":
@@ -79,7 +80,7 @@ public class yaChatClient implements Runnable {
          */
 
         // strat a thread to read incoming UDP message
-        Thread UDPIn = new Thread(new yaChatClient());
+        Thread UDPIn = new Thread(new Chatter());
         UDPIn.start();
 
         // reading user input and send mesg
@@ -87,7 +88,7 @@ public class yaChatClient implements Runnable {
         byte [] UDPOut = new byte [1024];
         while((inputLine = userInput.readLine()) != null) {
 
-            String inputs = "MESG Ann: " + inputLine + '\n';
+            String inputs = "MESG " + userName + ": " + inputLine + '\n';
             UDPOut = inputs.getBytes();
 
             Iterator chattersItr = chatters.iterator();
@@ -106,7 +107,7 @@ public class yaChatClient implements Runnable {
         // exit the chat
         TCPOut.println("EXIT");
         clientTCPSocket.close();
-        System.out.println("Good Bye!");
+        System.out.println("\n Good Bye!");
         return;
     }
 
@@ -126,23 +127,20 @@ public class yaChatClient implements Runnable {
 
                 switch (UDPInMsg.getType()) {
                     case "MESG":
-                        System.out.println(inMesg[0] + ":" + inMesg[1]);
+                        System.out.println(inMesg[0] + ":" + inMesg[1] + "\n");
                         break;
 
                     case "JOIN":
-                        if (!inChatter[0].equals(userName)) chatters.add(inChatter);
-//                        for (String [] chatter : chatters) {
-//                            System.out.println(Arrays.deepToString(chatter));
-//                        }
+                        if (!inChatter[0].equals(userName)) {
+                            chatters.add(inChatter);
+                            System.out.println(inChatter[0] + " has joined the chatroom \n");
+                        }
                         break;
 
                     case "EXIT":
                         if (!inChatter[0].equals(userName)) {
-                            Iterator itr = chatters.iterator();
-                            while(itr.hasNext()) {
-                                String [] nextUser = (String []) itr.next();
-                                if (nextUser[0].equals(inChatter[0])) itr.remove();
-                            }
+                            chatters.removeIf(chatter -> (chatter[0].equals(inChatter[0])));
+                            System.out.println(inChatter[0] + " has left the chatroom \n");
                             break;
                         }
                         clientUDPSocket.close();
@@ -175,9 +173,9 @@ class Message {
         return Arrays.stream(content).filter(data -> data.length() > 0).toArray(String[]::new);
     }
 
-    public List getAcceptedList(String userName) {
+    public ArrayList getAcceptedList(String userName) {
 
-        List <String[]> processedList = new ArrayList<String[]>();
+        ArrayList <String[]> processedList = new ArrayList<String[]>();
         String [] acceptedList = getContentByColonNSpace();
 
         acceptedList = Arrays.stream(acceptedList).filter(user -> !user.split(" ")[0].equals(userName)).toArray(String[]::new);
