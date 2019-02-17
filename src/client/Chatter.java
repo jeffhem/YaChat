@@ -1,5 +1,4 @@
 package client;
-import com.sun.deploy.util.ArrayUtil;
 
 import java.net.*;
 import java.io.*;
@@ -16,7 +15,7 @@ public class Chatter implements Runnable {
 
     public static void main(String [] arg) throws IOException {
         if(arg.length != 3) {
-            System.out.println("3 arguments are required");
+            System.out.println("Usage: java Chatter <screen Name> <Membership_server_addr> <Membership_server_tcp_port>");
             return;
         }
 
@@ -45,14 +44,13 @@ public class Chatter implements Runnable {
 
         // send HELO message
         int UDPPort = clientUDPSocket.getLocalPort();
-        PrintWriter TCPOut = new PrintWriter(clientTCPSocket.getOutputStream(), true);
-
-        TCPOut.println("HELO " + userName + " " + ClientHostAddress + " " + UDPPort);
+        System.out.println("====================================");
         System.out.println("My port is: " + UDPPort);
 
         // not using writeBytes, so the message would not break into packets
-//        DataOutputStream outToServer = new DataOutputStream(clientTCPSocket.getOutputStream());
-//        outToServer.writeBytes("HELO " + userName + " " + ClientHostAddress + " " + udpPort + '\n');
+        DataOutputStream outToServer = new DataOutputStream(clientTCPSocket.getOutputStream());
+        outToServer.writeBytes("HELO " + userName + " " + ClientHostAddress + " " + UDPPort + '\n');
+        outToServer.flush();
 
         // check if it connects successfully
         BufferedReader TPCIn = new BufferedReader((new InputStreamReader(clientTCPSocket.getInputStream())));
@@ -66,11 +64,13 @@ public class Chatter implements Runnable {
                     System.out.println(chatter[0] + " is in the chatroom");
                 }
                 System.out.println(userName + " accepted to the chatroom");
+                System.out.println("====================================");
                 System.out.print(userName + ": ");
                 break;
 
             case "RJCT":
                 System.out.println("Screen name already exists: " + userName);
+                System.out.println("====================================");
                 clientTCPSocket.close();
                 return;
         }
@@ -87,27 +87,30 @@ public class Chatter implements Runnable {
         String inputLine;
         byte [] UDPOut = new byte [1024];
         while((inputLine = userInput.readLine()) != null) {
-
             String inputs = "MESG " + userName + ": " + inputLine + '\n';
             UDPOut = inputs.getBytes();
 
-            Iterator chattersItr = chatters.iterator();
-            while (chattersItr.hasNext()) {
-                String [] chatter = (String [])chattersItr.next();
-                InetAddress chatterAddress = InetAddress.getByName(chatter[1]);
-                int chatterPort = Integer.parseInt(chatter[2]);
+            synchronized (chatters) {
+                Iterator chattersItr = chatters.iterator();
+                while (chattersItr.hasNext()) {
+                    String [] chatter = (String [])chattersItr.next();
+                    InetAddress chatterAddress = InetAddress.getByName(chatter[1]);
+                    int chatterPort = Integer.parseInt(chatter[2]);
 
-                DatagramPacket UDPOutPacket = new DatagramPacket(UDPOut, inputs.length(), chatterAddress,  chatterPort );
-                clientUDPSocket.send(UDPOutPacket);
+                    DatagramPacket UDPOutPacket = new DatagramPacket(UDPOut, inputs.length(), chatterAddress,  chatterPort );
+                    clientUDPSocket.send(UDPOutPacket);
+                }
             }
 
             System.out.print(userName + ": ");
         }
 
         // exit the chat
-        TCPOut.println("EXIT");
+        userInput.close();
+        outToServer.writeBytes("EXIT \n");
+        outToServer.flush();
         clientTCPSocket.close();
-        System.out.println("\n Good Bye!");
+        System.out.println("\nGood Bye!");
         return;
     }
 
@@ -127,20 +130,31 @@ public class Chatter implements Runnable {
 
                 switch (UDPInMsg.getType()) {
                     case "MESG":
-                        System.out.println(inMesg[0] + ":" + inMesg[1] + "\n");
+                        System.out.println();
+                        System.out.println(inMesg[0] + ":" + inMesg[1]);
                         break;
 
                     case "JOIN":
                         if (!inChatter[0].equals(userName)) {
-                            chatters.add(inChatter);
-                            System.out.println(inChatter[0] + " has joined the chatroom \n");
+                            synchronized (chatters) {
+                                chatters.add(inChatter);
+                                System.out.println();
+                                System.out.println("====================================");
+                                System.out.println(inChatter[0] + " has joined the chatroom");
+                                System.out.println("====================================");
+                            }
                         }
                         break;
 
                     case "EXIT":
                         if (!inChatter[0].equals(userName)) {
-                            chatters.removeIf(chatter -> (chatter[0].equals(inChatter[0])));
-                            System.out.println(inChatter[0] + " has left the chatroom \n");
+                            synchronized (chatters) {
+                                chatters.removeIf(chatter -> (chatter[0].equals(inChatter[0])));
+                                System.out.println();
+                                System.out.println("====================================");
+                                System.out.println(inChatter[0] + " has left the chatroom");
+                                System.out.println("====================================");
+                            }
                             break;
                         }
                         clientUDPSocket.close();
