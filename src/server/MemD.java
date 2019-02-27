@@ -6,9 +6,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class MemD implements Runnable {
-    private static Socket socketToClient;
-    private static ArrayList<String[]> memberList;
-    private static DatagramSocket serverUDPSOcket = null;
+    private static ArrayList<String[]> memberList = new ArrayList<>();
+    Socket socketToClient;
 
     public MemD(Socket socketParam) {
         socketToClient = socketParam;
@@ -17,9 +16,10 @@ public class MemD implements Runnable {
     public void run() {
 
         try {
+            DatagramSocket serverUDPSOcket = new DatagramSocket();
             BufferedReader infromClientBuf = new BufferedReader(new InputStreamReader(socketToClient.getInputStream()));
             DataOutputStream outToClient = new DataOutputStream(socketToClient.getOutputStream());
-
+            String[] newMember = null;
 
             TCPLoop: while(true) {
                 String inFromClient = infromClientBuf.readLine();
@@ -27,7 +27,7 @@ public class MemD implements Runnable {
 
                 switch(action[0]) {
                     case "HELO":
-                        String[] newMember = inFromClient.split("^[^\\s]*\\s")[1].split(" ");
+                        newMember = inFromClient.split("^[^\\s]*\\s")[1].split(" ");
                         String acceptMsg = "ACPT ";
 
                         synchronized (memberList) {
@@ -35,31 +35,54 @@ public class MemD implements Runnable {
                             while (memberItr.hasNext()) {
                                 String [] member = (String [])memberItr.next();
                                 acceptMsg = acceptMsg + member[0] + " " + member[1] + " " + member[2] + ":";
+
+                                // reject incoming user if the name in use
                                 if (member[0].equals(newMember[0])) {
                                     outToClient.writeBytes("RJCT " + newMember[0] + "\n");
+                                    outToClient.flush();
                                     break TCPLoop;
                                 }
                             }
+
                             acceptMsg = acceptMsg + newMember[0] + " " + newMember[1] + " " + newMember[2] + "\n";
+                            outToClient.writeBytes(acceptMsg);
+                            outToClient.flush();
+
                             memberList.add(newMember);
 
                             Iterator newMemberItr = memberList.iterator();
                             while (newMemberItr.hasNext()) {
-                                String [] chatter = (String [])newMemberItr.next();
-                                InetAddress chatterAddress = InetAddress.getByName(chatter[1]);
-                                int chatterPort = Integer.parseInt(chatter[2]);
+                                String [] member = (String [])newMemberItr.next();
+                                InetAddress chatterAddress = InetAddress.getByName(member[1]);
+                                int chatterPort = Integer.parseInt(member[2]);
 
-                                DatagramPacket UDPOutPacket = new DatagramPacket(UDPOut, inputs.length(), chatterAddress,  chatterPort );
-                                clientUDPSocket.send(UDPOutPacket);
+                                byte [] UDPOut = new byte [1024];
+                                String joinMsg = "JOIN " + newMember[0] + " " + newMember[1] + " " + newMember[2] + "\n";
+                                UDPOut = joinMsg.getBytes();
+
+                                DatagramPacket UDPOutPacket = new DatagramPacket(UDPOut, joinMsg.length(), chatterAddress,  chatterPort );
+                                serverUDPSOcket.send(UDPOutPacket);
                             }
-
 
                         }
 
-                        String
-
                         break;
                     case "EXIT":
+                        Iterator newMemberItr = memberList.iterator();
+                        while (newMemberItr.hasNext()) {
+                            String [] member = (String [])newMemberItr.next();
+                            InetAddress chatterAddress = InetAddress.getByName(member[1]);
+                            int chatterPort = Integer.parseInt(member[2]);
+
+                            byte [] UDPOut = new byte [1024];
+                            String joinMsg = "EXIT " + newMember[0] + "\n";
+                            UDPOut = joinMsg.getBytes();
+
+                            DatagramPacket UDPOutPacket = new DatagramPacket(UDPOut, joinMsg.length(), chatterAddress,  chatterPort );
+                            serverUDPSOcket.send(UDPOutPacket);
+                        }
+
+                        memberList.remove(newMember);
 
                         break TCPLoop;
                 }
@@ -80,7 +103,6 @@ public class MemD implements Runnable {
 
         int serverPort = java.lang.Integer.parseInt(arg[0]);
         ServerSocket welcomeSocket = new ServerSocket(serverPort);
-        serverUDPSOcket = new DatagramSocket(); // UDP socket
 
         while(true) {
             Socket clientConnectionSocket = welcomeSocket.accept();
