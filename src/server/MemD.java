@@ -13,10 +13,32 @@ public class MemD implements Runnable {
         socketToClient = socketParam;
     }
 
-    public void run() {
+    public void broadcastUDP(ArrayList memembers, String msg) {
 
         try {
             DatagramSocket serverUDPSOcket = new DatagramSocket();
+            Iterator newMemberItr = memembers.iterator();
+
+            while (newMemberItr.hasNext()) {
+                String [] member = (String [])newMemberItr.next();
+                InetAddress chatterAddress = InetAddress.getByName(member[1]);
+                int chatterPort = Integer.parseInt(member[2]);
+                byte [] UDPOut = new byte [1024];
+                UDPOut = msg.getBytes();
+
+                DatagramPacket UDPOutPacket = new DatagramPacket(UDPOut, msg.length(), chatterAddress,  chatterPort );
+                serverUDPSOcket.send(UDPOutPacket);
+            }
+
+        } catch (IOException e){
+            System.out.println(e);
+        }
+    }
+
+    public void run() {
+
+        try {
+            // DatagramSocket serverUDPSOcket = new DatagramSocket();
             BufferedReader infromClientBuf = new BufferedReader(new InputStreamReader(socketToClient.getInputStream()));
             DataOutputStream outToClient = new DataOutputStream(socketToClient.getOutputStream());
             String[] newMember = null;
@@ -29,6 +51,7 @@ public class MemD implements Runnable {
                     case "HELO":
                         newMember = inFromClient.split("^[^\\s]*\\s")[1].split(" ");
                         String acceptMsg = "ACPT ";
+                        String joinMsg = "JOIN ";
 
                         synchronized (memberList) {
                             Iterator memberItr = memberList.iterator();
@@ -49,40 +72,48 @@ public class MemD implements Runnable {
                             outToClient.flush();
 
                             memberList.add(newMember);
+                            joinMsg = joinMsg + newMember[0] + " " + newMember[1] + " " + newMember[2] + "\n";
 
-                            Iterator newMemberItr = memberList.iterator();
-                            while (newMemberItr.hasNext()) {
-                                String [] member = (String [])newMemberItr.next();
-                                InetAddress chatterAddress = InetAddress.getByName(member[1]);
-                                int chatterPort = Integer.parseInt(member[2]);
+                            broadcastUDP(memberList, joinMsg);
 
-                                byte [] UDPOut = new byte [1024];
-                                String joinMsg = "JOIN " + newMember[0] + " " + newMember[1] + " " + newMember[2] + "\n";
-                                UDPOut = joinMsg.getBytes();
-
-                                DatagramPacket UDPOutPacket = new DatagramPacket(UDPOut, joinMsg.length(), chatterAddress,  chatterPort );
-                                serverUDPSOcket.send(UDPOutPacket);
-                            }
+//                            Iterator newMemberItr = memberList.iterator();
+//                            while (newMemberItr.hasNext()) {
+//                                String [] member = (String [])newMemberItr.next();
+//                                InetAddress chatterAddress = InetAddress.getByName(member[1]);
+//                                int chatterPort = Integer.parseInt(member[2]);
+//
+//                                byte [] UDPOut = new byte [1024];
+//                                String joinMsg = "JOIN " + newMember[0] + " " + newMember[1] + " " + newMember[2] + "\n";
+//                                UDPOut = joinMsg.getBytes();
+//
+//                                DatagramPacket UDPOutPacket = new DatagramPacket(UDPOut, joinMsg.length(), chatterAddress,  chatterPort );
+//                                serverUDPSOcket.send(UDPOutPacket);
+//                            }
 
                         }
 
                         break;
                     case "EXIT":
-                        Iterator newMemberItr = memberList.iterator();
-                        while (newMemberItr.hasNext()) {
-                            String [] member = (String [])newMemberItr.next();
-                            InetAddress chatterAddress = InetAddress.getByName(member[1]);
-                            int chatterPort = Integer.parseInt(member[2]);
+                        String exitMsg = "EXIT " + newMember[0] + "\n";
 
-                            byte [] UDPOut = new byte [1024];
-                            String joinMsg = "EXIT " + newMember[0] + "\n";
-                            UDPOut = joinMsg.getBytes();
+                        synchronized (memberList) {
+                            broadcastUDP(memberList, exitMsg);
+                            memberList.remove(newMember);
 
-                            DatagramPacket UDPOutPacket = new DatagramPacket(UDPOut, joinMsg.length(), chatterAddress,  chatterPort );
-                            serverUDPSOcket.send(UDPOutPacket);
+//                        Iterator newMemberItr = memberList.iterator();
+//                        while (newMemberItr.hasNext()) {
+//                            String [] member = (String [])newMemberItr.next();
+//                            InetAddress chatterAddress = InetAddress.getByName(member[1]);
+//                            int chatterPort = Integer.parseInt(member[2]);
+//
+//                            byte [] UDPOut = new byte [1024];
+//                            String joinMsg = "EXIT " + newMember[0] + "\n";
+//                            UDPOut = joinMsg.getBytes();
+//
+//                            DatagramPacket UDPOutPacket = new DatagramPacket(UDPOut, joinMsg.length(), chatterAddress,  chatterPort );
+//                            serverUDPSOcket.send(UDPOutPacket);
+//                        }
                         }
-
-                        memberList.remove(newMember);
 
                         break TCPLoop;
                 }
