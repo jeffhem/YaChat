@@ -7,7 +7,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f895b329-5c71-40cb-a57d-748a3f8fa1af" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/server/MemD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/MemD.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -42,8 +41,8 @@
           <file leaf-file-name="MemD.java" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/server/MemD.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="417">
-                  <caret line="114" column="27" selection-start-line="114" selection-start-column="27" selection-end-line="114" selection-end-column="27" />
+                <state relative-caret-position="457">
+                  <caret line="115" column="5" lean-forward="true" selection-start-line="115" selection-start-column="5" selection-end-line="115" selection-end-column="5" />
                   <folding>
                     <element signature="imports" expanded="true" />
                   </folding>
@@ -240,12 +239,12 @@
       <workItem from="1549899950156" duration="4517000" />
       <workItem from="1549906455250" duration="15975000" />
       <workItem from="1550852524962" duration="14263000" />
-      <workItem from="1551931861220" duration="2867000" />
+      <workItem from="1551931861220" duration="3556000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="78534000" />
+    <option name="totallyTimeSpent" value="79223000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="5" y="23" width="1630" height="1027" extended-state="6" />
@@ -262,7 +261,7 @@
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.4993895" visible="true" weight="0.30537635" />
-      <window_info anchor="bottom" id="Terminal" order="7" weight="0.21350546" />
+      <window_info anchor="bottom" id="Terminal" order="7" weight="0.21290323" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="2" />
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14987406" />
@@ -384,8 +383,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/server/MemD.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="417">
-          <caret line="114" column="27" selection-start-line="114" selection-start-column="27" selection-end-line="114" selection-end-column="27" />
+        <state relative-caret-position="457">
+          <caret line="115" column="5" lean-forward="true" selection-start-line="115" selection-start-column="5" selection-end-line="115" selection-end-column="5" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

@@ -76,20 +76,6 @@ public class MemD implements Runnable {
 
                             broadcastUDP(memberList, joinMsg);
 
-//                            Iterator newMemberItr = memberList.iterator();
-//                            while (newMemberItr.hasNext()) {
-//                                String [] member = (String [])newMemberItr.next();
-//                                InetAddress chatterAddress = InetAddress.getByName(member[1]);
-//                                int chatterPort = Integer.parseInt(member[2]);
-//
-//                                byte [] UDPOut = new byte [1024];
-//                                String joinMsg = "JOIN " + newMember[0] + " " + newMember[1] + " " + newMember[2] + "\n";
-//                                UDPOut = joinMsg.getBytes();
-//
-//                                DatagramPacket UDPOutPacket = new DatagramPacket(UDPOut, joinMsg.length(), chatterAddress,  chatterPort );
-//                                serverUDPSOcket.send(UDPOutPacket);
-//                            }
-
                         }
 
                         break;
@@ -99,20 +85,6 @@ public class MemD implements Runnable {
                         synchronized (memberList) {
                             broadcastUDP(memberList, exitMsg);
                             memberList.remove(newMember);
-
-//                        Iterator newMemberItr = memberList.iterator();
-//                        while (newMemberItr.hasNext()) {
-//                            String [] member = (String [])newMemberItr.next();
-//                            InetAddress chatterAddress = InetAddress.getByName(member[1]);
-//                            int chatterPort = Integer.parseInt(member[2]);
-//
-//                            byte [] UDPOut = new byte [1024];
-//                            String joinMsg = "EXIT " + newMember[0] + "\n";
-//                            UDPOut = joinMsg.getBytes();
-//
-//                            DatagramPacket UDPOutPacket = new DatagramPacket(UDPOut, joinMsg.length(), chatterAddress,  chatterPort );
-//                            serverUDPSOcket.send(UDPOutPacket);
-//                        }
                         }
 
                         break TCPLoop;
