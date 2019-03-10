@@ -38,13 +38,12 @@ public class MemD implements Runnable {
     public void run() {
 
         try {
-            // DatagramSocket serverUDPSOcket = new DatagramSocket();
             BufferedReader infromClientBuf = new BufferedReader(new InputStreamReader(socketToClient.getInputStream()));
             DataOutputStream outToClient = new DataOutputStream(socketToClient.getOutputStream());
             String[] newMember = null;
+            String inFromClient;
 
-            TCPLoop: while(true) {
-                String inFromClient = infromClientBuf.readLine();
+            TCPLoop: while((inFromClient = infromClientBuf.readLine()) != null) {
                 String[] action = inFromClient.split("\\s|\\n");
 
                 switch(action[0]) {
@@ -80,17 +79,18 @@ public class MemD implements Runnable {
 
                         break;
                     case "EXIT":
-                        String exitMsg = "EXIT " + newMember[0] + "\n";
-
-                        synchronized (memberList) {
-                            broadcastUDP(memberList, exitMsg);
-                            memberList.remove(newMember);
-                        }
-
                         break TCPLoop;
                 }
             }
 
+            // closing the TCP connection
+            String exitMsg = "EXIT " + newMember[0] + "\n";
+            synchronized (memberList) {
+                broadcastUDP(memberList, exitMsg);
+                memberList.remove(newMember);
+            }
+
+            socketToClient.close();
 
         } catch (IOException e){
             System.out.println(e);
